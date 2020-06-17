@@ -1,0 +1,54 @@
+@media screen and (min-width: 768px) {
+    .jumbotron {
+        padding-top: 0px;
+        padding-bottom: 48px;
+    }
+    .container .jumbotron, .container-fluid .jumbotron {
+        padding-right: 60px;
+        padding-left: 60px;
+    }
+    .jumbotron h1, .jumbotron .h1 {
+        font-size: 63px;
+    }
+}
+
+.container {
+    width: 100%;
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+.col-sm-offset-2 {
+    margin-left: 0%;
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+.col-sm-8 {
+    width: 100%;
+}
+
+.col-md-offset-3 {
+    margin-left: 40%;
+    width: 300px;
+}
+
+.leftBlock {
+    margin-left: 100px;
+}
+
+.rightBlock {
+    margin-left: 400px;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    text-indent: 0.3cm;
+  }
+  th, td {
+    padding-right: 100px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;    
+  }
