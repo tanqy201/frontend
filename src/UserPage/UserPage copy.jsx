@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import 'babel-polyfill';
 import { userActions } from '../_actions';
-import { test } from './function';
-import { SubmitForm, TransactionForm } from './SubmitForm';
+import { test} from './function';
 
 
 // import {test} from '../fabric/network.js'
@@ -21,8 +20,8 @@ class UserPage extends React.Component {
             cars: [],
             submitted: false,
             //
-            key: 'key',
-            make: 'make',
+            key: '',
+            make: '',
             model: '',
             color: '',
             owner: '',
@@ -34,10 +33,10 @@ class UserPage extends React.Component {
 
     componentDidMount() {
         // this.props.setLoading(true);
-        axios.get('http://localhost:3000' + '/cars').then(res => {
+        axios.get('http://localhost:3000'+'/cars').then(res => {
             // this.props.setLoading(false);
-            if (res.data.status) {
-                this.setState({ cars: res.data.cars })
+            if(res.data.status) {
+                this.setState({cars: res.data.cars})
             } else {
                 alert(res.data.error.message)
             }
@@ -52,7 +51,7 @@ class UserPage extends React.Component {
         this.setState({ [name]: value });
     }
 
-    handleSubmit(e) {
+    async handleSubmit(e) {
         e.preventDefault();
         this.setState({ submitted: true });
         const { arg1 } = this.state;
@@ -60,10 +59,11 @@ class UserPage extends React.Component {
         if (arg1) {
             this.setState({
                 data: data.concat([[data.length, arg1]])
-            }, () => {
+            }, ()=>{
                 this.updateTable();
             });
         }
+        await test();
     }
 
     async updateTable() {
@@ -73,49 +73,31 @@ class UserPage extends React.Component {
         var row = table.insertRow(1);
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
-        cell1.innerHTML = data[data.length - 1][0];
-        cell2.innerHTML = data[data.length - 1][1];
-    }
-
-    alertTest() {
-        alert("this is alert")
+        cell1.innerHTML = data[data.length-1][0];
+        cell2.innerHTML = data[data.length-1][1];
     }
 
     onFormSubmit(e) {
         e.preventDefault();
-        // this.props.setLoading(true);
-        axios.post('http://localhost:3000' + '/cars', {
+        this.props.setLoading(true);
+        axios.post('http://'+  process.env.REACT_APP_API_HOST  +':'+ process.env.REACT_APP_API_PORT+'/cars', {
             key: this.state.key,
             make: this.state.make,
             model: this.state.model,
             color: this.state.color,
             owner: this.state.owner
         }).then(res => {
-            // this.props.setLoading(false);
+            this.props.setLoading(false);
             if (res.data.status) {
                 alert(res.data.message);
-                this.setState({ redirect: true })
+                this.setState({redirect: true})
             } else {
                 alert(res.data.error.message)
             }
         }).catch(err => {
-            // this.props.setLoading(false);
+            this.props.setLoading(false);
             alert('Something went wrong')
         });
-        axios.get('http://localhost:3000' + '/cars').then(res => {
-            // this.props.setLoading(false);
-            if (res.data.status) {
-                this.setState({ cars: res.data.cars })
-            } else {
-                alert(res.data.error.message)
-            }
-        }).catch(err => {
-            // this.props.setLoading(false);
-            alert('Something went wrong')
-        }).then(() => {
-            this.componentDidMount()
-        })
-        console.log(this.state.cars)
     }
 
     render() {
@@ -129,6 +111,7 @@ class UserPage extends React.Component {
 
             </tr>
         })
+        const { arg1, submitted } = this.state;
 
         return (
             <div>
@@ -151,19 +134,58 @@ class UserPage extends React.Component {
                         </Link>
                     </div>
                 </nav>
-                <SubmitForm
-                    _key={this.state.key}
-                    _make={this.state.make}
-                    _model={this.state.model}
-                    _color={this.state.color}
-                    _owner={this.state.owner}
-                    _submitted={this.state.submitted}
-                    onFormSubmit={i => this.onFormSubmit(i)}
-                    handleChange={this.handleChange}
-                />
-                <TransactionForm
-                    cars={this.state.cars}
-                />
+                <div className="col-md-6 col-md-offset-3 leftBlock">
+                    <h2>Function</h2>
+                    <form name="form" onSubmit={this.handleSubmit}>
+                        <div className={'form-group' + (submitted && !arg1 ? ' has-error' : '')}>
+                            <label htmlFor="key">key</label>
+                            <input type="text" className="form-control" name="key" autoComplete="off" value={this.state.key} onChange={this.handleChange} />
+                            {submitted && !key &&
+                                <div className="help-block">arg1 is required</div>
+                            }
+                            <label htmlFor="make">make</label>
+                            <input type="text" className="form-control" name="make" autoComplete="off" value={this.state.make} onChange={this.handleChange} />
+                            {submitted && !make &&
+                                <div className="help-block">make is required</div>
+                            }
+                            <label htmlFor="model">key</label>
+                            <input type="text" className="form-control" name="model" autoComplete="off" value={this.state.model} onChange={this.handleChange} />
+                            {submitted && !model &&
+                                <div className="help-block">model is required</div>
+                            }
+                            <label htmlFor="color">make</label>
+                            <input type="text" className="form-control" name="color" autoComplete="off" value={this.state.color} onChange={this.handleChange} />
+                            {submitted && !color &&
+                                <div className="help-block">color is required</div>
+                            }
+                            <label htmlFor="owner">make</label>
+                            <input type="text" className="form-control" name="owner" autoComplete="off" value={this.state.owner} onChange={this.handleChange} />
+                            {submitted && !owner &&
+                                <div className="help-block">owner is required</div>
+                            }
+                        </div>
+                        <div className="form-group">
+                            <button className="btn btn-primary">submit</button>
+                        </div>
+                    </form>
+                </div>
+                <div className="col-md-6 col-md-offset-3 rightBlock">
+                    <h2>Output</h2>
+                    <table id="userTable">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Make</th>
+                                <th>Model</th>
+                                <th>Color</th>
+                                <th>Owner</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {tbody}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         );
     }

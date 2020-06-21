@@ -9,6 +9,7 @@ import { HomePage } from '../HomePage';
 import { UserPage } from '../UserPage';
 import { LoginPage } from '../LoginPage';
 import { RegisterPage } from '../RegisterPage';
+import { IssuerPage } from '../IssuerPage';
 
 class App extends React.Component {
     constructor(props) {
@@ -33,6 +34,7 @@ class App extends React.Component {
                             <Switch>
                                 <PrivateRoute exact path="/" component={HomePage} />
                                 <PrivateRoute exact path="/user" component={UserPage} />
+                                <PrivateRoute exact path="/issuer" component={IssuerPage} />
                                 <Route path="/login" component={LoginPage} />
                                 <Route path="/register" component={RegisterPage} />
                                 <Redirect from="*" to="/" />

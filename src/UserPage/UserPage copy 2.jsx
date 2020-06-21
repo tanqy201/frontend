@@ -1,11 +1,11 @@
 import React from 'react';
 import axios from 'axios';
+
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import 'babel-polyfill';
 import { userActions } from '../_actions';
-import { test } from './function';
-import { SubmitForm, TransactionForm } from './SubmitForm';
+import { test} from './function';
 
 
 // import {test} from '../fabric/network.js'
@@ -19,13 +19,7 @@ class UserPage extends React.Component {
             arg1: '',
             data: [],
             cars: [],
-            submitted: false,
-            //
-            key: 'key',
-            make: 'make',
-            model: '',
-            color: '',
-            owner: '',
+            submitted: false
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -34,10 +28,12 @@ class UserPage extends React.Component {
 
     componentDidMount() {
         // this.props.setLoading(true);
-        axios.get('http://localhost:3000' + '/cars').then(res => {
+        console.log(process.env.REACT_APP_API_HOST);
+        console.log('http://localhost:3000'+'/cars');
+        axios.get('http://localhost:3000'+'/cars').then(res => {
             // this.props.setLoading(false);
-            if (res.data.status) {
-                this.setState({ cars: res.data.cars })
+            if(res.data.status) {
+                this.setState({cars: res.data.cars})
             } else {
                 alert(res.data.error.message)
             }
@@ -52,7 +48,7 @@ class UserPage extends React.Component {
         this.setState({ [name]: value });
     }
 
-    handleSubmit(e) {
+    async handleSubmit(e) {
         e.preventDefault();
         this.setState({ submitted: true });
         const { arg1 } = this.state;
@@ -60,10 +56,11 @@ class UserPage extends React.Component {
         if (arg1) {
             this.setState({
                 data: data.concat([[data.length, arg1]])
-            }, () => {
+            }, ()=>{
                 this.updateTable();
             });
         }
+        await test();
     }
 
     async updateTable() {
@@ -73,63 +70,19 @@ class UserPage extends React.Component {
         var row = table.insertRow(1);
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
-        cell1.innerHTML = data[data.length - 1][0];
-        cell2.innerHTML = data[data.length - 1][1];
+        cell1.innerHTML = data[data.length-1][0];
+        cell2.innerHTML = data[data.length-1][1];
     }
 
-    alertTest() {
-        alert("this is alert")
-    }
-
-    onFormSubmit(e) {
-        e.preventDefault();
-        // this.props.setLoading(true);
-        axios.post('http://localhost:3000' + '/cars', {
-            key: this.state.key,
-            make: this.state.make,
-            model: this.state.model,
-            color: this.state.color,
-            owner: this.state.owner
-        }).then(res => {
-            // this.props.setLoading(false);
-            if (res.data.status) {
-                alert(res.data.message);
-                this.setState({ redirect: true })
-            } else {
-                alert(res.data.error.message)
-            }
-        }).catch(err => {
-            // this.props.setLoading(false);
-            alert('Something went wrong')
-        });
-        axios.get('http://localhost:3000' + '/cars').then(res => {
-            // this.props.setLoading(false);
-            if (res.data.status) {
-                this.setState({ cars: res.data.cars })
-            } else {
-                alert(res.data.error.message)
-            }
-        }).catch(err => {
-            // this.props.setLoading(false);
-            alert('Something went wrong')
-        }).then(() => {
-            this.componentDidMount()
-        })
-        console.log(this.state.cars)
+    async test(info) {
+        alert("start getting");
+        return userActions.getAll();
     }
 
     render() {
-        const tbody = this.state.cars.map(car => {
-            return <tr key={car.Key}>
-                <td>{car.Key}</td>
-                <td>{car.Record.make}</td>
-                <td>{car.Record.model}</td>
-                <td>{car.Record.color}</td>
-                <td>{car.Record.owner}</td>
-
-            </tr>
-        })
-
+        // const { loggingIn } = this.props;
+        // const { username, password, submitted } = this.state;
+        const { arg1, submitted } = this.state;
         return (
             <div>
                 <nav class="navbar navbar-inverse">
@@ -151,19 +104,33 @@ class UserPage extends React.Component {
                         </Link>
                     </div>
                 </nav>
-                <SubmitForm
-                    _key={this.state.key}
-                    _make={this.state.make}
-                    _model={this.state.model}
-                    _color={this.state.color}
-                    _owner={this.state.owner}
-                    _submitted={this.state.submitted}
-                    onFormSubmit={i => this.onFormSubmit(i)}
-                    handleChange={this.handleChange}
-                />
-                <TransactionForm
-                    cars={this.state.cars}
-                />
+                <div className="col-md-6 col-md-offset-3 leftBlock">
+                    <h2>Function</h2>
+                    <form name="form" onSubmit={this.handleSubmit}>
+                        <div className={'form-group' + (submitted && !arg1 ? ' has-error' : '')}>
+                            <label htmlFor="arg1">argument1</label>
+                            <input type="text" className="form-control" name="arg1" autoComplete="off" value={arg1} onChange={this.handleChange} />
+                            {submitted && !arg1 &&
+                                <div className="help-block">arg1 is required</div>
+                            }
+                        </div>
+                        <div className="form-group">
+                            <button className="btn btn-primary">submit</button>
+                        </div>
+                    </form>
+                </div>
+                <div className="col-md-6 col-md-offset-3 rightBlock">
+                    <h2>Output</h2>
+                    <table id="userTable">
+                        <thead>
+                            <tr>
+                                <th>key</th>
+                                <th>value</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
         );
     }

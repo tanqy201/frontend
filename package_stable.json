@@ -15,13 +15,9 @@
   },
   "dependencies": {
     "@types/node": "^14.0.13",
-    "axios": "^0.19.2",
     "babel-polyfill": "^6.26.0",
-    "body-parser": "^1.19.0",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "fabric-ca-client": "~1.4.0",
-    "fabric-network": "~1.4.0",
+    "fabric-ca-client": "^2.1.0",
+    "fabric-network": "^2.1.0",
     "fs": "0.0.1-security",
     "history": "^4.10.1",
     "react": "^16.12.0",
@@ -45,7 +41,7 @@
     "chai": "^4.2.0",
     "eslint": "^5.9.0",
     "mocha": "^5.2.0",
-    "nyc": "^13.1.0",
+    "nyc": "^14.1.1",
     "sinon": "^7.1.1",
     "sinon-chai": "^3.3.0"
   },
@@ -57,14 +53,14 @@
   "engineStrict": true,
   "author": "Hyperledger",
   "nyc": {
-    "exclude": {
-      "0": "coverage/**",
-      "1": "test/**"
-    },
-    "reporter": {
-      "0": "text-summary",
-      "1": "html"
-    },
+    "exclude": [
+      "coverage/**",
+      "test/**"
+    ],
+    "reporter": [
+      "text-summary",
+      "html"
+    ],
     "all": true,
     "check-coverage": true,
     "statements": 100,

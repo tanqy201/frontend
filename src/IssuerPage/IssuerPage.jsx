@@ -4,40 +4,37 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import 'babel-polyfill';
 import { userActions } from '../_actions';
-import { test } from './function';
 import { SubmitForm, TransactionForm } from './SubmitForm';
 
 
 // import {test} from '../fabric/network.js'
 // let network = require('../fabric/network.js');
 
-class UserPage extends React.Component {
+class IssuerPage extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             arg1: '',
             data: [],
-            cars: [],
+            equity: [],
             submitted: false,
             //
-            key: 'key',
-            make: 'make',
-            model: '',
-            color: '',
-            owner: '',
+            equityId: '',
+            name: '',
+            country: 'CANADA',
+            capTable: []
         };
 
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
         // this.props.setLoading(true);
-        axios.get('http://localhost:3000' + '/cars').then(res => {
+        axios.get('http://localhost:3000' + '/cars/' + 'CANADA').then(res => {
             // this.props.setLoading(false);
             if (res.data.status) {
-                this.setState({ cars: res.data.cars })
+                this.setState({ equity: res.data.equity })
             } else {
                 alert(res.data.error.message)
             }
@@ -45,6 +42,7 @@ class UserPage extends React.Component {
             // this.props.setLoading(false);
             alert('Something went wrong')
         })
+        console.log(this.state.equity)
     }
 
     handleChange(e) {
@@ -52,44 +50,13 @@ class UserPage extends React.Component {
         this.setState({ [name]: value });
     }
 
-    handleSubmit(e) {
-        e.preventDefault();
-        this.setState({ submitted: true });
-        const { arg1 } = this.state;
-        const data = this.state.data;
-        if (arg1) {
-            this.setState({
-                data: data.concat([[data.length, arg1]])
-            }, () => {
-                this.updateTable();
-            });
-        }
-    }
-
-    async updateTable() {
-        const data = this.state.data;
-        console.log(data);
-        var table = document.getElementById("userTable");
-        var row = table.insertRow(1);
-        var cell1 = row.insertCell(0);
-        var cell2 = row.insertCell(1);
-        cell1.innerHTML = data[data.length - 1][0];
-        cell2.innerHTML = data[data.length - 1][1];
-    }
-
-    alertTest() {
-        alert("this is alert")
-    }
-
-    onFormSubmit(e) {
+    async onFormSubmit(e) {
         e.preventDefault();
         // this.props.setLoading(true);
-        axios.post('http://localhost:3000' + '/cars', {
-            key: this.state.key,
-            make: this.state.make,
-            model: this.state.model,
-            color: this.state.color,
-            owner: this.state.owner
+        await axios.post('http://localhost:3000' + '/cars/', {
+            equityId: this.state.equityId,
+            name: this.state.name,
+            country: this.state.country
         }).then(res => {
             // this.props.setLoading(false);
             if (res.data.status) {
@@ -102,10 +69,10 @@ class UserPage extends React.Component {
             // this.props.setLoading(false);
             alert('Something went wrong')
         });
-        axios.get('http://localhost:3000' + '/cars').then(res => {
+        axios.get('http://localhost:3000' + '/cars/CANADA').then(res => {
             // this.props.setLoading(false);
             if (res.data.status) {
-                this.setState({ cars: res.data.cars })
+                this.setState({ equity: res.data.equity })
             } else {
                 alert(res.data.error.message)
             }
@@ -115,18 +82,16 @@ class UserPage extends React.Component {
         }).then(() => {
             this.componentDidMount()
         })
-        console.log(this.state.cars)
+        console.log(this.state.equity)
     }
 
     render() {
-        const tbody = this.state.cars.map(car => {
-            return <tr key={car.Key}>
-                <td>{car.Key}</td>
-                <td>{car.Record.make}</td>
-                <td>{car.Record.model}</td>
-                <td>{car.Record.color}</td>
-                <td>{car.Record.owner}</td>
-
+        const tbody = this.state.equity.map(equity => {
+            return <tr key={equity.Key}>
+                <td>{equity.Key}</td>
+                <td>{equity.Record.equityId}</td>
+                <td>{equity.Record.name}</td>
+                <td>{equity.Record.country}</td>
             </tr>
         })
 
@@ -141,8 +106,8 @@ class UserPage extends React.Component {
                         </div>
                         <ul class="nav navbar-nav">
                             <li><a href="/">Home</a></li>
-                            <li class="active"><a href="/User">User</a></li>
-                            <li><a href="/Issuer">Issuer</a></li>
+                            <li><a href="/User">User</a></li>
+                            <li class="active"><a href="/Issuer">Issuer</a></li>
                             <li><a href="/Security">Security</a></li>
                             <li><a href="/Unknown">Unknown</a></li>
                         </ul>
@@ -152,17 +117,14 @@ class UserPage extends React.Component {
                     </div>
                 </nav>
                 <SubmitForm
-                    _key={this.state.key}
-                    _make={this.state.make}
-                    _model={this.state.model}
-                    _color={this.state.color}
-                    _owner={this.state.owner}
-                    _submitted={this.state.submitted}
+                    _equityId={this.state.equityId}
+                    _name={this.state.name}
+                    _country={this.state.country}
                     onFormSubmit={i => this.onFormSubmit(i)}
                     handleChange={this.handleChange}
                 />
                 <TransactionForm
-                    cars={this.state.cars}
+                    equity={this.state.equity}
                 />
             </div>
         );
@@ -180,4 +142,4 @@ class UserPage extends React.Component {
 // };
 
 // const connectedLoginPage = connect(mapState, actionCreators)(LoginPage);
-export { UserPage as UserPage };
+export { IssuerPage as IssuerPage };
