@@ -1,5 +1,3 @@
-# react-redux-registration-login-example
-
-Blockchain frontend
+# Blockchain frontend
 
 To be scripted
